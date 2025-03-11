@@ -1,4 +1,5 @@
 #include "philo.h"
+
 void	*philosopher(void *arg)
 {
 	t_philo	*philo;
@@ -8,30 +9,28 @@ void	*philosopher(void *arg)
 	philo = (t_philo *)arg;
 	data = philo->data;
 	id = philo->id;
-
-	// Başlamak için çok kısa bir bekleme (çift numaralı filozoflar için)
-	if (id % 2 == 0)
+	// Sadece tek sayılı filozoflar için küçük bir gecikme ekleyin
+	// Çift sayılı filozoflar hemen başlayabilir
+	if (id % 2 == 1)
 		ft_sleep(10);
 	while (!check_simulation_stop(data))
 	{
-		// Düşünme
-		safe_print(data, id, "düşünüyor", BLUE);
-		ft_sleep(10); // Kısa düşünme süresi
-		// Çatalları almaya çalışma
+		// Doğrudan çatal almaya geç, düşünmeyi atla (ilk turda)
 		take_forks(philo);
 		if (check_simulation_stop(data))
 		{
-			put_forks(philo); // Simülasyon durmuşsa çatalları bırak
-			break ;
+			put_forks(philo);
+			break;
 		}
-        if(philosopher_v2(philo, data, id))
-            break;
+		if(philosopher_v2(philo, data, id))
+			break;
 	}
 	return (NULL);
 }
 int philosopher_v2(t_philo *philo, t_data *data, int id)
 {
-    safe_print(data, id, "yemek yiyor", GREEN);
+	// Yemek yeme
+	safe_print(data, id, "yemek yiyor", GREEN);
 	ft_sleep(data->time_to_eat);
 	// Yemek sayısını güncelleme
 	pthread_mutex_lock(&data->state_mutex);
@@ -44,16 +43,18 @@ int philosopher_v2(t_philo *philo, t_data *data, int id)
 	// Tokluğu kontrol etme
 	philo_enough_food(data);
 	if (check_simulation_stop(data))
-		return 1; ;
+		return 1;
 	// Uyuma
 	safe_print(data, id, "uyuyor", BLUE);
 	ft_sleep(data->time_to_sleep);
-    return 0;
+	// Düşünme (bundan sonraki turlarda)
+	safe_print(data, id, "düşünüyor", BLUE);
+	return 0;
 }
 void	philo_enough_food(t_data *data)
 {
-	int	all_ate_enough;
-	int	i;
+	int all_ate_enough;
+	int i;
 
 	all_ate_enough = 1;
 	i = -1;
@@ -71,7 +72,9 @@ void	philo_enough_food(t_data *data)
 
 	if (all_ate_enough && data->must_eat_count > 0)
 	{
-		safe_print(data, 0, "Tüm filozoflar yeterince yemek yedi. Simülasyon sona eriyor.", GREEN);
+		safe_print(data, 0,
+			"Tüm filozoflar yeterince yemek yedi. Simülasyon sona eriyor.",
+			GREEN);
 		set_simulation_stop(data);
 	}
 }

@@ -1,4 +1,5 @@
 #include "philo.h"
+
 int	try_take_forks(t_philo *philo)
 {
 	t_data	*data;
@@ -8,37 +9,38 @@ int	try_take_forks(t_philo *philo)
 	data = philo->data;
 	left_fork = philo->id;
 	right_fork = (philo->id + 1) % data->philosopher_count;
-
 	// Tekli çatalları almak için çift ve tek filozoflar için farklı stratejiler
 	if (philo->id % 2 == 0)
 	{
-        if(single_phiolosopher(philo, data, left_fork, right_fork) == 0)
-            return 0;
+		if (single_phiolosopher(philo, data, left_fork, right_fork) == 0)
+			return (0);
 	}
 	else
-    {
-        if(double_philosopher(philo, data, left_fork, right_fork) == 0)
-            return 0;
-    }
+	{
+		if (double_philosopher(philo, data, left_fork, right_fork) == 0)
+			return (0);
+	}
 	return (1);
 }
-int single_phiolosopher(t_philo *philo, t_data *data, int left_fork, int right_fork)
+int	single_phiolosopher(t_philo *philo, t_data *data, int left_fork,
+		int right_fork)
 {
-    if (pthread_mutex_lock(&data->forks[left_fork]) != 0)
+	if (pthread_mutex_lock(&data->forks[left_fork]) != 0)
 		return (0);
 	safe_print(data, philo->id, "sol çatalı aldı", YELLOW);
 	if (pthread_mutex_lock(&data->forks[right_fork]) != 0)
-    {
+	{
 		pthread_mutex_unlock(&data->forks[left_fork]);
 		return (0);
 	}
 	safe_print(data, philo->id, "sağ çatalı aldı", YELLOW);
-    return 1;
+	return (1);
 }
-int double_philosopher(t_philo *philo, t_data *data, int left_fork, int right_fork)
+int	double_philosopher(t_philo *philo, t_data *data, int left_fork,
+		int right_fork)
 {
-    if (pthread_mutex_lock(&data->forks[right_fork]) != 0)
-	    return (0);
+	if (pthread_mutex_lock(&data->forks[right_fork]) != 0)
+		return (0);
 	safe_print(data, philo->id, "sağ çatalı aldı", YELLOW);
 	if (pthread_mutex_lock(&data->forks[left_fork]) != 0)
 	{
@@ -46,7 +48,7 @@ int double_philosopher(t_philo *philo, t_data *data, int left_fork, int right_fo
 		return (0);
 	}
 	safe_print(data, philo->id, "sol çatalı aldı", YELLOW);
-    return 1;
+	return (1);
 }
 
 void	take_forks(t_philo *philo)
@@ -54,9 +56,9 @@ void	take_forks(t_philo *philo)
 	t_data	*data;
 
 	data = philo->data;
-	// Deadlock önleme: Tek ID'li filozoflar, çift ID'liler hemen sonra başlar
-	if (philo->id % 2 != 0)
-		ft_sleep(10);
+
+	// Deadlock önleme stratejisini kaldırıyoruz, çünkü
+	// zaten philosopher fonksiyonunda gecikme eklendi
 
 	while (!check_simulation_stop(data))
 	{
@@ -66,7 +68,7 @@ void	take_forks(t_philo *philo)
 			data->states[philo->id] = EATING;
 			data->last_meal_time[philo->id] = get_current_time_ms();
 			pthread_mutex_unlock(&data->state_mutex);
-			return ;
+			return;
 		}
 		ft_sleep(1); // Kısa bekleme ile yeniden deneme
 	}
@@ -74,9 +76,9 @@ void	take_forks(t_philo *philo)
 
 void	put_forks(t_philo *philo)
 {
-	t_data	*data;
-	int		left_fork;
-	int		right_fork;
+	t_data *data;
+	int left_fork;
+	int right_fork;
 
 	data = philo->data;
 	left_fork = philo->id;

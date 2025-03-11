@@ -44,7 +44,6 @@ int	main(int ac, char **av)
     philos = malloc(sizeof(t_philo) * data->philosopher_count);
     if(!philos)
     {
-        cleanup(data, NULL);
         return (1);
     }
 	thread_start(data, philos);

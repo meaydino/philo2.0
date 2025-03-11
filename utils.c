@@ -1,4 +1,5 @@
 #include "philo.h"
+
 long long	get_current_time_ms(void)
 {
 	struct timeval	time;
@@ -38,17 +39,17 @@ int	arg_ctrl(char *str)
 
 int	ft_atoi(char *str)
 {
-	int	i;
-	int	sign;
-	int	result;
+	int i;
+	int sign;
+	int result;
 
 	i = 0;
 	sign = 1;
 	result = 0;
 	if (arg_ctrl(str))
 		return (0);
-	while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n'
-		|| str[i] == '\v' || str[i] == '\f' || str[i] == '\r')
+	while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n' || str[i] == '\v'
+		|| str[i] == '\f' || str[i] == '\r')
 		i++;
 	if (str[i] == '-' || str[i] == '+')
 	{

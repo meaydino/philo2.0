@@ -1,4 +1,5 @@
 #include "philo.h"
+
 int	av_config(char **av, t_data *data)
 {
 	data->philosopher_count = ft_atoi(av[1]);
@@ -10,8 +11,8 @@ int	av_config(char **av, t_data *data)
 	if (av[5])
 		data->must_eat_count = ft_atoi(av[5]);
 	if (data->philosopher_count <= 0 || data->time_to_die <= 0
-		|| data->time_to_eat <= 0 || data->time_to_sleep <= 0
-		|| (av[5] && data->must_eat_count <= 0))
+		|| data->time_to_eat <= 0 || data->time_to_sleep <= 0 || (av[5]
+			&& data->must_eat_count <= 0))
 	{
 		printf("Geçersiz argümanlar. Tüm değerler pozitif olmalıdır.\n");
 		return (1);

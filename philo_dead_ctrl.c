@@ -1,4 +1,5 @@
 #include "philo.h"
+
 void	*death_monitor_func(void *arg)
 {
 	t_data		*data;
@@ -6,7 +7,6 @@ void	*death_monitor_func(void *arg)
 	int			i;
 
 	data = (t_data *)arg;
-	
 	while (!check_simulation_stop(data))
 	{
 		i = 0;
@@ -32,7 +32,8 @@ void	*death_monitor_func(void *arg)
 
 int	philo_dead_control(t_data *data)
 {
-	if (pthread_create(&data->death_monitor, NULL, death_monitor_func, data) != 0)
+	if (pthread_create(&data->death_monitor, NULL, death_monitor_func,
+			data) != 0)
 	{
 		printf("Ölüm kontrolü thread'i oluşturulamadı\n");
 		set_simulation_stop(data);
@@ -44,15 +45,16 @@ int	philo_dead_control(t_data *data)
 // Thread başlatma
 int	thread_start(t_data *data, t_philo *philos)
 {
-	int		i;
-	int		j;
+	int	i;
+	int	j;
 
 	i = -1;
 	while (++i < data->philosopher_count)
 	{
 		philos[i].id = i;
 		philos[i].data = data;
-		if (pthread_create(&data->threads[i], NULL, philosopher, &philos[i]) != 0)
+		if (pthread_create(&data->threads[i], NULL, philosopher,
+				&philos[i]) != 0)
 		{
 			set_simulation_stop(data);
 			j = -1;
@@ -63,12 +65,12 @@ int	thread_start(t_data *data, t_philo *philos)
 			return (1);
 		}
 	}
-    thread_start_v2(data, philos);
-    return (0);
+	thread_start_v2(data, philos);
+	return (0);
 }
-int thread_start_v2(t_data *data, t_philo *philos)
+int	thread_start_v2(t_data *data, t_philo *philos)
 {
-    int i;
+	int i;
 	// Ölüm kontrolü threadini başlat
 	if (philo_dead_control(data))
 	{
