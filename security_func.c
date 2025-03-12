@@ -17,10 +17,11 @@ void	set_simulation_stop(t_data *data)
 	pthread_mutex_unlock(&data->stop_mutex);
 }
 
+
 void	safe_print(t_data *data, int id, char *message, char *color)
 {
 	pthread_mutex_lock(&data->print_mutex);
-	if (!check_simulation_stop(data))
+	if (!check_simulation_stop(data) || str_contains(message, "dead"))
 	{
 		printf("%s%lld ms: %d %s%s\n", color, get_current_time_ms()
 			- data->simulation_start, id + 1, message, RESET);
