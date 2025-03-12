@@ -85,3 +85,15 @@ int	thread_start_v2(t_data *data, t_philo *philos)
 	cleanup(data, philos);
 	return (0);
 }
+void one_philosopher(t_data *data , t_philo *philo, int left_fork)
+{
+	// Sadece tek çatalı alabilir, ikinci çatal olmadığı için bir süre bekler ve ölür
+	pthread_mutex_lock(&data->forks[left_fork]);
+	safe_print(data, philo->id, "has taken a fork", YELLOW);
+
+	// Tek çatalla bekle - time_to_die süresinden fazla beklemeye gerek yok
+	// Ölüm kontrolü thread'i ölümü tespit edecektir
+	ft_sleep(data->time_to_die + 10);
+
+	pthread_mutex_unlock(&data->forks[left_fork]);
+}

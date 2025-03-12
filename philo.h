@@ -11,6 +11,7 @@
 # define THINKING 0
 # define HUNGRY 1
 # define EATING 2
+# define SLEEP 3
 
 // Renkli çıktı için
 # define RED "\x1B[31m"
@@ -68,6 +69,8 @@ int         thread_start_v2(t_data *data, t_philo *philos);
 int         philosopher_v2(t_philo *philo, t_data *data, int id);
 int         double_philosopher(t_philo *philo, t_data *data, int left_fork, int right_fork);
 int         single_phiolosopher(t_philo *philo, t_data *data, int left_fork, int right_fork);
+void 		one_philosopher(t_data *data , t_philo *philo, int left_fork);
+
 
 
 

@@ -10,6 +10,11 @@ int	try_take_forks(t_philo *philo)
 	left_fork = philo->id;
 	right_fork = (philo->id + 1) % data->philosopher_count;
 	// Tekli çatalları almak için çift ve tek filozoflar için farklı stratejiler
+	if(data->philosopher_count == 1)
+	{
+		one_philosopher(data, philo, left_fork);
+		return 0;
+	}
 	if (philo->id % 2 == 0)
 	{
 		if (single_phiolosopher(philo, data, left_fork, right_fork) == 0)
