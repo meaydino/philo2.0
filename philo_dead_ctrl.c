@@ -16,6 +16,8 @@ void *death_monitor_func(void *arg)
             pthread_mutex_lock(&data->state_mutex);
             current_time = get_current_time_ms();
             time_since_last_meal = current_time - data->last_meal_time[i];
+
+            // Filozof açlıktan öldü mü?
             if (time_since_last_meal >= data->time_to_die)
             {
                 // Simülasyonu hemen durdur
@@ -27,19 +29,26 @@ void *death_monitor_func(void *arg)
                        data->last_meal_time[i] + data->time_to_die - data->simulation_start,
                        i + 1, RESET);
                 pthread_mutex_unlock(&data->print_mutex);
+
                 pthread_mutex_unlock(&data->state_mutex);
                 return (NULL);
             }
+
+            // Eğer ölüm yaklaşıyorsa daha sık kontrol et
             if (data->time_to_die - time_since_last_meal < 5)
             {
                 pthread_mutex_unlock(&data->state_mutex);
-                // Ölüm yakın - mikrosaniye düzeyinde kontrol
+                // Ölüm yakın - mikrosaniye düzeyinde kontrol için kısa bekleme
                 usleep(100);
-                continue;  // Hemen tekrar kontrol et
+                // i'yi artırmadan döngüye devam et - bu aynı filozofu tekrar kontrol eder
             }
-            pthread_mutex_unlock(&data->state_mutex);
-            i++;
+            else
+            {
+                pthread_mutex_unlock(&data->state_mutex);
+                i++;  // Sadece ölüm yakın değilse bir sonraki filozofa geç
+            }
         }
+        // Normal ölüm kontrolü için kısa bekleme
         usleep(200);
     }
     return (NULL);
