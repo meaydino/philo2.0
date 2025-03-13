@@ -3,8 +3,6 @@
 void *death_monitor_func(void *arg)
 {
     t_data      *data;
-    long long   current_time;
-    long long   time_since_last_meal;
     int         i;
 
     data = (t_data *)arg;
@@ -13,46 +11,39 @@ void *death_monitor_func(void *arg)
         i = 0;
         while (i < data->philosopher_count && !check_simulation_stop(data))
         {
-            pthread_mutex_lock(&data->state_mutex);
-            current_time = get_current_time_ms();
-            time_since_last_meal = current_time - data->last_meal_time[i];
-
-            // Filozof açlıktan öldü mü?
-            if (time_since_last_meal >= data->time_to_die)
-            {
-                // Simülasyonu hemen durdur
-                set_simulation_stop(data);
-
-                // Ölüm mesajını göster - tam time_to_die zamanında
-                pthread_mutex_lock(&data->print_mutex);
-                printf("%s%lld ms: %d açlıktan öldü!%s\n", RED,
-                       data->last_meal_time[i] + data->time_to_die - data->simulation_start,
-                       i + 1, RESET);
-                pthread_mutex_unlock(&data->print_mutex);
-
-                pthread_mutex_unlock(&data->state_mutex);
+            if (check_philo_death(data, i))
                 return (NULL);
-            }
-
-            // Eğer ölüm yaklaşıyorsa daha sık kontrol et
-            if (data->time_to_die - time_since_last_meal < 5)
-            {
-                pthread_mutex_unlock(&data->state_mutex);
-                // Ölüm yakın - mikrosaniye düzeyinde kontrol için kısa bekleme
-                usleep(100);
-                // i'yi artırmadan döngüye devam et - bu aynı filozofu tekrar kontrol eder
-            }
-            else
-            {
-                pthread_mutex_unlock(&data->state_mutex);
-                i++;  // Sadece ölüm yakın değilse bir sonraki filozofa geç
-            }
+            i++;
         }
-        // Normal ölüm kontrolü için kısa bekleme
         usleep(200);
     }
     return (NULL);
 }
+
+int check_philo_death(t_data *data, int i)
+{
+    long long current_time;
+    long long time_since_last_meal;
+
+    pthread_mutex_lock(&data->state_mutex);
+    current_time = get_current_time_ms();
+    time_since_last_meal = current_time - data->last_meal_time[i];
+    if (time_since_last_meal >= data->time_to_die)
+    {
+        set_simulation_stop(data);
+        pthread_mutex_lock(&data->print_mutex);
+        printf("%s%lld ms: %d açlıktan öldü!%s\n", RED,
+            data->last_meal_time[i] + data->time_to_die - data->simulation_start,
+            i + 1, RESET);
+        pthread_mutex_unlock(&data->print_mutex);
+        pthread_mutex_unlock(&data->state_mutex);
+        return (1);
+    }
+    pthread_mutex_unlock(&data->state_mutex);
+    return (0);
+}
+
+
 
 int	philo_dead_control(t_data *data)
 {

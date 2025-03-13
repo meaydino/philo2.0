@@ -70,7 +70,9 @@ int         philosopher_v2(t_philo *philo, t_data *data, int id);
 int         double_philosopher(t_philo *philo, t_data *data, int left_fork, int right_fork);
 int         single_phiolosopher(t_philo *philo, t_data *data, int left_fork, int right_fork);
 void 		one_philosopher(t_data *data , t_philo *philo, int left_fork);
+
 int			str_contains(const char *str, const char *substr);
+int 		check_philo_death(t_data *data, int i);
 
 
 

@@ -14,7 +14,7 @@ int	av_config(char **av, t_data *data)
 		|| data->time_to_eat <= 0 || data->time_to_sleep <= 0 || (av[5]
 			&& data->must_eat_count <= 0))
 	{
-		printf("Geçersiz argümanlar. Tüm değerler pozitif olmalıdır.\n");
+		printf("Geçersiz argümanlar.\n");
 		return (1);
 	}
 	return (0);
@@ -32,7 +32,7 @@ void	mutex_initialization(t_data *data)
 	while (++i < data->philosopher_count)
 	{
 		pthread_mutex_init(&data->forks[i], NULL);
-		data->states[i] = THINKING;
+		data->states[i] = 0;
 		data->meals_eaten[i] = 0;
 		data->last_meal_time[i] = data->simulation_start;
 	}
