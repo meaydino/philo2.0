@@ -97,6 +97,6 @@ void	put_forks(t_philo *philo)
 
 	// Durum güncelleme
 	pthread_mutex_lock(&table->state_mutex);
-	table->states[philo->id] = THINKING;
+	table->states[philo->id] = SLEEP;
 	pthread_mutex_unlock(&table->state_mutex);
 }

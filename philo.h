@@ -9,9 +9,8 @@
 
 // Filozof durumları
 # define THINKING 0
-# define HUNGRY 1
-# define EATING 2
-# define SLEEP 3
+# define EATING 1
+# define SLEEP 2
 
 // Renkli çıktı için
 # define RED "\x1B[31m"

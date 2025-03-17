@@ -32,7 +32,7 @@ int check_philo_death(t_data *table, int i)
     {
         set_simulation_stop(table);
         pthread_mutex_lock(&table->print_mutex);
-        printf("%s%lld ms: %d açlıktan öldü!%s\n", RED,
+        printf("%s%lld ms: %d dead%s\n", RED,
             table->last_meal_time[i] + table->time_to_die - table->simulation_start,
             i + 1, RESET);
         pthread_mutex_unlock(&table->print_mutex);
