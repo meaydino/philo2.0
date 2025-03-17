@@ -43,36 +43,42 @@ typedef struct s_data
 typedef struct s_philo
 {
 	int				id;                // Filozof ID'si (0'dan başlar)
-	t_data			*data;             // Program verileri
+	t_data			*table;             // Program verileri
 }	t_philo;
 
 // Fonksiyon prototipleri
-int			philo_dead_control(t_data *data);
+int			philo_dead_control(t_data *table);
 void		*death_monitor_func(void *arg);
-int	        thread_start(t_data *data, t_philo *philos);
+int	        thread_start(t_data *table, t_philo *philos);
 void		*philosopher(void *arg);
 long long	get_current_time_ms(void);
-void		mutex_initialization(t_data *data);
-int			init_simulation(t_data *data);
-int			av_config(char **av, t_data *data);
+int			mutex_initialization(t_data *table);
+int			init_simulation(t_data *table);
+int			av_config(char **av, t_data *table);
 void		ft_sleep(long long ms);
 void		take_forks(t_philo *philo);
 void		put_forks(t_philo *philo);
-void		philo_enough_food(t_data *data);
-void		cleanup(t_data *data, t_philo *philos);
+void		philo_enough_food(t_data *table);
+int			cleanup(t_data *table, t_philo *philos, int error, int flag);
 int			ft_atoi(char *str);
 int			arg_ctrl(char *str);
-int			check_simulation_stop(t_data *data);
-void		set_simulation_stop(t_data *data);
-void		safe_print(t_data *data, int id, char *message, char *color);
-int         thread_start_v2(t_data *data, t_philo *philos);
-int         philosopher_v2(t_philo *philo, t_data *data, int id);
-int         double_philosopher(t_philo *philo, t_data *data, int left_fork, int right_fork);
-int         single_phiolosopher(t_philo *philo, t_data *data, int left_fork, int right_fork);
-void 		one_philosopher(t_data *data , t_philo *philo, int left_fork);
-
+int			check_simulation_stop(t_data *table);
+void		set_simulation_stop(t_data *table);
+void		safe_print(t_data *table, int id, char *message, char *color);
+int         thread_start_v2(t_data *table);
+int         philosopher_v2(t_philo *philo, t_data *table, int id);
+int         double_philosopher(t_philo *philo, t_data *table, int left_fork, int right_fork);
+int         single_phiolosopher(t_philo *philo, t_data *table, int left_fork, int right_fork);
+void 		one_philosopher(t_data *table , t_philo *philo, int left_fork);
 int			str_contains(const char *str, const char *substr);
-int 		check_philo_death(t_data *data, int i);
+int 		check_philo_death(t_data *table, int i);
+int			init_destroy(t_data *table, int flag);
+int 		try_take_forks(t_philo *philo);
+
+
+
+
+
 
 
 

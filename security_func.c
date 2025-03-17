@@ -1,30 +1,30 @@
 #include "philo.h"
 
-int	check_simulation_stop(t_data *data)
+int	check_simulation_stop(t_data *table)
 {
 	int	stop;
 
-	pthread_mutex_lock(&data->stop_mutex);
-	stop = data->simulation_stop;
-	pthread_mutex_unlock(&data->stop_mutex);
+	pthread_mutex_lock(&table->stop_mutex);
+	stop = table->simulation_stop;
+	pthread_mutex_unlock(&table->stop_mutex);
 	return (stop);
 }
 
-void	set_simulation_stop(t_data *data)
+void	set_simulation_stop(t_data *table)
 {
-	pthread_mutex_lock(&data->stop_mutex);
-	data->simulation_stop = 1;
-	pthread_mutex_unlock(&data->stop_mutex);
+	pthread_mutex_lock(&table->stop_mutex);
+	table->simulation_stop = 1;
+	pthread_mutex_unlock(&table->stop_mutex);
 }
 
 
-void	safe_print(t_data *data, int id, char *message, char *color)
+void	safe_print(t_data *table, int id, char *message, char *color)
 {
-	pthread_mutex_lock(&data->print_mutex);
-	if (!check_simulation_stop(data) || str_contains(message, "dead"))
+	pthread_mutex_lock(&table->print_mutex);
+	if (!check_simulation_stop(table) || str_contains(message, "dead"))
 	{
 		printf("%s%lld ms: %d %s%s\n", color, get_current_time_ms()
-			- data->simulation_start, id + 1, message, RESET);
+			- table->simulation_start, id + 1, message, RESET);
 	}
-	pthread_mutex_unlock(&data->print_mutex);
+	pthread_mutex_unlock(&table->print_mutex);
 }

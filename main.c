@@ -1,52 +1,65 @@
 #include "philo.h"
-void	cleanup(t_data *data, t_philo *philos)
+int	cleanup(t_data *table, t_philo *philos, int error, int flag)
+{
+	if (error == 1)
+		printf("Error!\n");
+	if (flag > 0)
+		init_destroy(table, flag);
+	if (table->threads)
+		free(table->threads);
+	if (table->states)
+		free(table->states);
+	if (table->meals_eaten)
+		free(table->meals_eaten);
+	if (table->last_meal_time)
+		free(table->last_meal_time);
+	if (philos)
+		free(philos);
+	free(table);
+	return (1);
+}
+int	init_destroy(t_data *table, int flag)
 {
 	int	i;
 
-	i = -1;
-	if (data->forks)
+	if (flag > 0)
+		pthread_mutex_destroy(&table->state_mutex);
+	if (flag > 1)
+		pthread_mutex_destroy(&table->stop_mutex);
+	if (flag > 2)
+		pthread_mutex_destroy(&table->print_mutex);
+	if (flag > 3)
 	{
-		while (++i < data->philosopher_count)
-			pthread_mutex_destroy(&data->forks[i]);
-		free(data->forks);
+		i = -1;
+		if (table->forks)
+		{
+			while (++i < table->philosopher_count)
+				pthread_mutex_destroy(&table->forks[i]);
+			free(table->forks);
+		}
 	}
-	pthread_mutex_destroy(&data->state_mutex);
-	pthread_mutex_destroy(&data->stop_mutex);
-	pthread_mutex_destroy(&data->print_mutex);
-	if (data->threads)
-		free(data->threads);
-	if (data->states)
-		free(data->states);
-	if (data->meals_eaten)
-		free(data->meals_eaten);
-	if (data->last_meal_time)
-		free(data->last_meal_time);
-	if (philos)
-		free(philos);
+	return (1);
 }
 int	main(int ac, char **av)
 {
-	t_data	*data;
-    t_philo *philos;
+	t_data	*table;
+	t_philo	*philos;
+
 	if (ac < 5 || ac > 6)
 	{
-		printf("USAGE: %s <philosopher_number> <death_time> <eating_time> <sleeping_time> [number of meals each_philosopher_needs_to_eat]\n", av[0]);
+		printf("Check Arguments!\n");
 		return (1);
 	}
-	data = malloc(sizeof(t_data));
-	if (!data)
-		return (1);
-	if (av_config(av, data) || init_simulation(data))
-	{
-		cleanup(data, NULL);
-		return (1);
-	}
-    philos = malloc(sizeof(t_philo) * data->philosopher_count);
-    if(!philos)
-    {
-		cleanup(data, NULL);
-        return (1);
-    }
-	thread_start(data, philos);
+	table = malloc(sizeof(t_data));
+	if (!table)
+		return (cleanup(NULL, NULL, 1, 0));
+	if (av_config(av, table) || init_simulation(table))
+		return (cleanup(table, NULL, 1, 0));
+	philos = malloc(sizeof(t_philo) * table->philosopher_count);
+	if (!philos)
+		return (cleanup(table, NULL, 1, 4));
+	if (thread_start(table, philos))
+		return (cleanup(table, philos, 1, 4));
+	cleanup(table, philos, 0, 4);
 	return (0);
 }

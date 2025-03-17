@@ -1,60 +1,75 @@
 #include "philo.h"
 
-int	av_config(char **av, t_data *data)
+int	av_config(char **av, t_data *table)
 {
-	data->philosopher_count = ft_atoi(av[1]);
-	data->time_to_die = ft_atoi(av[2]);
-	data->time_to_eat = ft_atoi(av[3]);
-	data->time_to_sleep = ft_atoi(av[4]);
-	data->simulation_stop = 0;
-	data->must_eat_count = -1;
+	table->threads = NULL;
+	table->forks = NULL;
+	table->states = NULL;
+	table->meals_eaten = NULL;
+	table->last_meal_time = NULL;
+	table->philosopher_count = ft_atoi(av[1]);
+	table->time_to_die = ft_atoi(av[2]);
+	table->time_to_eat = ft_atoi(av[3]);
+	table->time_to_sleep = ft_atoi(av[4]);
+	table->simulation_stop = 0;
+	table->must_eat_count = -1;
 	if (av[5])
-		data->must_eat_count = ft_atoi(av[5]);
-	if (data->philosopher_count <= 0 || data->time_to_die <= 0
-		|| data->time_to_eat <= 0 || data->time_to_sleep <= 0 || (av[5]
-			&& data->must_eat_count <= 0))
+		table->must_eat_count = ft_atoi(av[5]);
+	if (table->philosopher_count <= 0 || table->time_to_die <= 0
+		|| table->time_to_eat <= 0 || table->time_to_sleep <= 0 || (av[5]
+			&& table->must_eat_count <= 0))
 	{
-		printf("Geçersiz argümanlar.\n");
 		return (1);
 	}
 	return (0);
 }
 
-void	mutex_initialization(t_data *data)
+int	mutex_initialization(t_data *table)
 {
 	int	i;
+	int	error;
 
 	i = -1;
-	pthread_mutex_init(&data->state_mutex, NULL);
-	pthread_mutex_init(&data->stop_mutex, NULL);
-	pthread_mutex_init(&data->print_mutex, NULL);
-	data->simulation_start = get_current_time_ms();
-	while (++i < data->philosopher_count)
+	error = 0;
+	error = pthread_mutex_init(&table->state_mutex, NULL);
+	if (error != 0)
+		return (1);
+	error = pthread_mutex_init(&table->stop_mutex, NULL);
+	if (error != 0)
+		return (init_destroy(table, 1));
+	error = pthread_mutex_init(&table->print_mutex, NULL);
+	if (error != 0)
+		return (init_destroy(table, 2));
+	table->simulation_start = get_current_time_ms();
+	while (++i < table->philosopher_count)
 	{
-		pthread_mutex_init(&data->forks[i], NULL);
-		data->states[i] = 0;
-		data->meals_eaten[i] = 0;
-		data->last_meal_time[i] = data->simulation_start;
+		if (pthread_mutex_init(&table->forks[i], NULL) != 0)
+			return (cleanup(table, NULL, 0, 3));
+		table->states[i] = 0;
+		table->meals_eaten[i] = 0;
+		table->last_meal_time[i] = table->simulation_start;
 	}
+	return (0);
 }
 
-int	init_simulation(t_data *data)
+int	init_simulation(t_data *table)
 {
-	data->threads = malloc(sizeof(pthread_t) * data->philosopher_count);
-	if (!data->threads)
+	table->threads = malloc(sizeof(pthread_t) * table->philosopher_count);
+	if (!table->threads)
 		return (1);
-	data->forks = malloc(sizeof(pthread_mutex_t) * data->philosopher_count);
-	if (!data->forks)
+	table->forks = malloc(sizeof(pthread_mutex_t) * table->philosopher_count);
+	if (!table->forks)
 		return (1);
-	data->states = malloc(sizeof(int) * data->philosopher_count);
-	if (!data->states)
+	table->states = malloc(sizeof(int) * table->philosopher_count);
+	if (!table->states)
 		return (1);
-	data->meals_eaten = malloc(sizeof(int) * data->philosopher_count);
-	if (!data->meals_eaten)
+	table->meals_eaten = malloc(sizeof(int) * table->philosopher_count);
+	if (!table->meals_eaten)
 		return (1);
-	data->last_meal_time = malloc(sizeof(long long) * data->philosopher_count);
-	if (!data->last_meal_time)
+	table->last_meal_time = malloc(sizeof(long long) * table->philosopher_count);
+	if (!table->last_meal_time)
 		return (1);
-	mutex_initialization(data);
+	if (mutex_initialization(table))
+		return (1);
 	return (0);
 }
