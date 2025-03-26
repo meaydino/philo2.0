@@ -32,7 +32,7 @@ int check_philo_death(t_data *table, int i)
     {
         set_simulation_stop(table);
         pthread_mutex_lock(&table->print_mutex);
-        printf("%s%lld ms: %d dead%s\n", RED,
+        printf("%s%lld ms: %d died%s\n", RED,
             table->last_meal_time[i] + table->time_to_die - table->simulation_start,
             i + 1, RESET);
         pthread_mutex_unlock(&table->print_mutex);
@@ -105,16 +105,4 @@ int thread_start_v2(t_data *table)
 
     // Temizliği burada yapma (cleanup fonksiyonu main'de çağrılıyor)
     return (0);
-}
-void one_philosopher(t_data *table , t_philo *philo, int left_fork)
-{
-	// Sadece tek çatalı alabilir, ikinci çatal olmadığı için bir süre bekler ve ölür
-	pthread_mutex_lock(&table->forks[left_fork]);
-	safe_print(table, philo->id, "has taken a fork", YELLOW);
-
-	// Tek çatalla bekle - time_to_die süresinden fazla beklemeye gerek yok
-	// Ölüm kontrolü thread'i ölümü tespit edecektir
-	ft_sleep(table->time_to_die + 10);
-
-	pthread_mutex_unlock(&table->forks[left_fork]);
 }

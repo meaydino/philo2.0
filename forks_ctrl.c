@@ -68,12 +68,8 @@ void take_forks(t_philo *philo)
     {
         if (try_take_forks(philo))
         {
-            // Çatallar alındı, yemek yeme durumuna geçiş
-            pthread_mutex_lock(&table->state_mutex);
-            table->states[philo->id] = EATING;
             // Yemek zamanını güncellemek kritik - hemen güncelle
             table->last_meal_time[philo->id] = get_current_time_ms();
-            pthread_mutex_unlock(&table->state_mutex);
             return;
         }
         // Çatalları alamadık, kısa bir süre bekleyip tekrar deneyelim
@@ -94,9 +90,4 @@ void	put_forks(t_philo *philo)
 	// Mutex'leri bırakma
 	pthread_mutex_unlock(&table->forks[left_fork]);
 	pthread_mutex_unlock(&table->forks[right_fork]);
-
-	// Durum güncelleme
-	pthread_mutex_lock(&table->state_mutex);
-	table->states[philo->id] = SLEEP;
-	pthread_mutex_unlock(&table->state_mutex);
 }

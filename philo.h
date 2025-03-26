@@ -13,11 +13,12 @@
 # define SLEEP 2
 
 // Renkli çıktı için
-# define RED "\x1B[31m"
-# define GREEN "\x1B[32m"
-# define YELLOW "\x1B[33m"
-# define BLUE "\x1B[34m"
-# define RESET "\x1B[0m"
+# define RED "\x1B[31m" //dead
+# define GREEN "\x1B[32m" // is eating
+# define YELLOW "\x1B[33m" // has taken a fork
+# define BLUE "\x1B[34m" // is sleeping
+# define MAGENTA "\x1B[35m" // is thinking
+# define RESET "\x1B[0m" // resetleme rengi
 
 typedef struct s_data
 {
@@ -73,12 +74,6 @@ int			str_contains(const char *str, const char *substr);
 int 		check_philo_death(t_data *table, int i);
 int			init_destroy(t_data *table, int flag);
 int 		try_take_forks(t_philo *philo);
-
-
-
-
-
-
 
 
 

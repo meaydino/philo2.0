@@ -4,7 +4,6 @@ int	av_config(char **av, t_data *table)
 {
 	table->threads = NULL;
 	table->forks = NULL;
-	table->states = NULL;
 	table->meals_eaten = NULL;
 	table->last_meal_time = NULL;
 	table->philosopher_count = ft_atoi(av[1]);
@@ -31,9 +30,6 @@ int	mutex_initialization(t_data *table)
 
 	i = -1;
 	error = 0;
-	error = pthread_mutex_init(&table->state_mutex, NULL);
-	if (error != 0)
-		return (1);
 	error = pthread_mutex_init(&table->stop_mutex, NULL);
 	if (error != 0)
 		return (init_destroy(table, 1));
@@ -45,7 +41,6 @@ int	mutex_initialization(t_data *table)
 	{
 		if (pthread_mutex_init(&table->forks[i], NULL) != 0)
 			return (cleanup(table, NULL, 0, 3));
-		table->states[i] = 0;
 		table->meals_eaten[i] = 0;
 		table->last_meal_time[i] = table->simulation_start;
 	}
@@ -59,9 +54,6 @@ int	init_simulation(t_data *table)
 		return (1);
 	table->forks = malloc(sizeof(pthread_mutex_t) * table->philosopher_count);
 	if (!table->forks)
-		return (1);
-	table->states = malloc(sizeof(int) * table->philosopher_count);
-	if (!table->states)
 		return (1);
 	table->meals_eaten = malloc(sizeof(int) * table->philosopher_count);
 	if (!table->meals_eaten)

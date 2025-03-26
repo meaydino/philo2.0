@@ -519,8 +519,6 @@ int	cleanup(t_data *table, t_philo *philos, int error, int flag)
 		init_destroy(table, flag);
 	if (table->threads)
 		free(table->threads);
-	if (table->states)
-		free(table->states);
 	if (table->meals_eaten)
 		free(table->meals_eaten);
 	if (table->last_meal_time)

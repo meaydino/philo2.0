@@ -1,6 +1,6 @@
 NAME = philo
-CC = clang
-CFLAGS = -Wall -Wextra -Werror -g
+CC = cc
+CFLAGS = -Wall -Wextra -Werror
 RM = rm -rf
 OBJ = $(SRC:.c=.o)
 SRC = forks_ctrl.c \

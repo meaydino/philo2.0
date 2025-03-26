@@ -7,8 +7,6 @@ int	cleanup(t_data *table, t_philo *philos, int error, int flag)
 		init_destroy(table, flag);
 	if (table->threads)
 		free(table->threads);
-	if (table->states)
-		free(table->states);
 	if (table->meals_eaten)
 		free(table->meals_eaten);
 	if (table->last_meal_time)
@@ -21,9 +19,7 @@ int	cleanup(t_data *table, t_philo *philos, int error, int flag)
 int	init_destroy(t_data *table, int flag)
 {
 	int	i;
-
-	if (flag > 0)
-		pthread_mutex_destroy(&table->state_mutex);
+	
 	if (flag > 1)
 		pthread_mutex_destroy(&table->stop_mutex);
 	if (flag > 2)

@@ -19,7 +19,7 @@ void ft_sleep(long long ms)
         current_time = get_current_time_ms();
         if (current_time - start_time >= ms)
             break;
-        usleep(50); // Daha hassas zaman dilimlerinde kontrol (0.05ms)
+        usleep(100); // Daha hassas zaman dilimlerinde kontrol (0.05ms)
     }
 }
 

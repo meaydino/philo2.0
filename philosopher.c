@@ -31,7 +31,7 @@ int philosopher_v2(t_philo *philo, t_data *table, int id)
     pthread_mutex_lock(&table->state_mutex);
     table->last_meal_time[id] = get_current_time_ms();
     pthread_mutex_unlock(&table->state_mutex);
-    safe_print(table, id, "eating", GREEN);
+    safe_print(table, id, "is eating", GREEN);
     ft_sleep(table->time_to_eat);
     pthread_mutex_lock(&table->state_mutex);
     table->meals_eaten[id]++;
@@ -42,9 +42,9 @@ int philosopher_v2(t_philo *philo, t_data *table, int id)
     philo_enough_food(table);
     if (check_simulation_stop(table))
         return 1;
-    safe_print(table, id, "sleeping", BLUE);
+    safe_print(table, id, "is sleeping", BLUE);
     ft_sleep(table->time_to_sleep);
-    safe_print(table, id, "thinking", BLUE);
+    safe_print(table, id, "is thinking", MAGENTA);
     return 0;
 }
 void	philo_enough_food(t_data *table)
@@ -68,4 +68,16 @@ void	philo_enough_food(t_data *table)
 
 	if (all_ate_enough && table->must_eat_count > 0)
 		set_simulation_stop(table);
+}
+void one_philosopher(t_data *table , t_philo *philo, int left_fork)
+{
+	// Sadece tek çatalı alabilir, ikinci çatal olmadığı için bir süre bekler ve ölür
+	pthread_mutex_lock(&table->forks[left_fork]);
+	safe_print(table, philo->id, "has taken a fork", YELLOW);
+
+	// Tek çatalla bekle - time_to_die süresinden fazla beklemeye gerek yok
+	// Ölüm kontrolü thread'i ölümü tespit edecektir
+	ft_sleep(table->time_to_die + 10);
+
+	pthread_mutex_unlock(&table->forks[left_fork]);
 }
