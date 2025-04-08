@@ -28,14 +28,10 @@ void *philosopher(void *arg)
 }
 int philosopher_v2(t_philo *philo, t_data *table, int id)
 {
-    pthread_mutex_lock(&table->state_mutex);
     table->last_meal_time[id] = get_current_time_ms();
-    pthread_mutex_unlock(&table->state_mutex);
     safe_print(table, id, "is eating", GREEN);
     ft_sleep(table->time_to_eat);
-    pthread_mutex_lock(&table->state_mutex);
     table->meals_eaten[id]++;
-    pthread_mutex_unlock(&table->state_mutex);
     put_forks(philo);
     if (check_simulation_stop(table))
         return 1;
@@ -55,7 +51,6 @@ void	philo_enough_food(t_data *table)
 	all_ate_enough = 1;
 	i = -1;
 
-	pthread_mutex_lock(&table->state_mutex);
 	while (++i < table->philosopher_count)
 	{
 		if (table->meals_eaten[i] < table->must_eat_count)
@@ -64,7 +59,6 @@ void	philo_enough_food(t_data *table)
 			break ;
 		}
 	}
-	pthread_mutex_unlock(&table->state_mutex);
 
 	if (all_ate_enough && table->must_eat_count > 0)
 		set_simulation_stop(table);

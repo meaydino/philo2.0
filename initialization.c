@@ -23,7 +23,7 @@ int	av_config(char **av, t_data *table)
 	return (0);
 }
 
-int	mutex_initialization(t_data *table)
+int	mutex_initialization(t_data *table, t_philo *philo)
 {
 	int	i;
 	int	error;
@@ -32,22 +32,22 @@ int	mutex_initialization(t_data *table)
 	error = 0;
 	error = pthread_mutex_init(&table->stop_mutex, NULL);
 	if (error != 0)
-		return (init_destroy(table, 1));
+		return (1);
 	error = pthread_mutex_init(&table->print_mutex, NULL);
 	if (error != 0)
-		return (init_destroy(table, 2));
+		return (init_destroy(table, 2, 0));
 	table->simulation_start = get_current_time_ms();
 	while (++i < table->philosopher_count)
 	{
 		if (pthread_mutex_init(&table->forks[i], NULL) != 0)
-			return (cleanup(table, NULL, 0, 3));
+			return (cleanup(philo, 0, 4, i));
 		table->meals_eaten[i] = 0;
 		table->last_meal_time[i] = table->simulation_start;
 	}
 	return (0);
 }
 
-int	init_simulation(t_data *table)
+int	init_simulation(t_data *table, t_philo *philo)
 {
 	table->threads = malloc(sizeof(pthread_t) * table->philosopher_count);
 	if (!table->threads)
@@ -61,7 +61,7 @@ int	init_simulation(t_data *table)
 	table->last_meal_time = malloc(sizeof(long long) * table->philosopher_count);
 	if (!table->last_meal_time)
 		return (1);
-	if (mutex_initialization(table))
+	if (mutex_initialization(table, philo))
 		return (1);
 	return (0);
 }

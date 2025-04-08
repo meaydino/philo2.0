@@ -27,9 +27,7 @@ typedef struct s_data
 	long long		simulation_start;          // Simülasyon başlangıç zamanı
 	int				*meals_eaten;              // Her filozofun yediği yemek sayısı
 	long long		*last_meal_time;           // Her filozofun son yemek yeme zamanı
-	pthread_mutex_t	state_mutex;               // Durum değişiklikleri için mutex
 	pthread_mutex_t	*forks;                    // Çatallar (mutex'ler)
-	int				*states;                   // Filozofların durumları
 	pthread_t		*threads;                  // Thread'ler
 	pthread_t		death_monitor;             // Ölüm kontrolü için thread
 	int				time_to_die;               // Açlıktan ölme süresi (ms)
@@ -52,14 +50,14 @@ void		*death_monitor_func(void *arg);
 int	        thread_start(t_data *table, t_philo *philos);
 void		*philosopher(void *arg);
 long long	get_current_time_ms(void);
-int			mutex_initialization(t_data *table);
-int			init_simulation(t_data *table);
+int			mutex_initialization(t_data *table, t_philo *philo);
+int			init_simulation(t_data *table, t_philo *philo);
 int			av_config(char **av, t_data *table);
 void		ft_sleep(long long ms);
 void		take_forks(t_philo *philo);
 void		put_forks(t_philo *philo);
 void		philo_enough_food(t_data *table);
-int			cleanup(t_data *table, t_philo *philos, int error, int flag);
+int			cleanup(t_philo *philos, int error, int flag, int count);
 int			ft_atoi(char *str);
 int			arg_ctrl(char *str);
 int			check_simulation_stop(t_data *table);
@@ -72,7 +70,7 @@ int         single_phiolosopher(t_philo *philo, t_data *table, int left_fork, in
 void 		one_philosopher(t_data *table , t_philo *philo, int left_fork);
 int			str_contains(const char *str, const char *substr);
 int 		check_philo_death(t_data *table, int i);
-int			init_destroy(t_data *table, int flag);
+int			init_destroy(t_data *table, int flag, int count);
 int 		try_take_forks(t_philo *philo);
 
 

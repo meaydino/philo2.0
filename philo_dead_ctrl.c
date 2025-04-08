@@ -25,7 +25,6 @@ int check_philo_death(t_data *table, int i)
     long long current_time;
     long long time_since_last_meal;
 
-    pthread_mutex_lock(&table->state_mutex);
     current_time = get_current_time_ms();
     time_since_last_meal = current_time - table->last_meal_time[i];
     if (time_since_last_meal >= table->time_to_die)
@@ -36,10 +35,8 @@ int check_philo_death(t_data *table, int i)
             table->last_meal_time[i] + table->time_to_die - table->simulation_start,
             i + 1, RESET);
         pthread_mutex_unlock(&table->print_mutex);
-        pthread_mutex_unlock(&table->state_mutex);
         return (1);
     }
-    pthread_mutex_unlock(&table->state_mutex);
     return (0);
 }
 

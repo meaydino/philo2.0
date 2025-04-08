@@ -1,25 +1,35 @@
 #include "philo.h"
-int	cleanup(t_data *table, t_philo *philos, int error, int flag)
+int	cleanup(t_philo *philos, int error, int flag, int count)
 {
+	t_data *table;
+
+	table = NULL;
+	if (philos != NULL)
+		table = philos->table;
 	if (error == 1)
 		printf("Error!\n");
 	if (flag > 0)
-		init_destroy(table, flag);
-	if (table->threads)
-		free(table->threads);
-	if (table->meals_eaten)
-		free(table->meals_eaten);
-	if (table->last_meal_time)
-		free(table->last_meal_time);
+		init_destroy(table, flag, count);
+	if (table)
+	{
+		if (table->threads)
+			free(table->threads);
+		if(table->forks)
+			free(table->forks);
+		if (table->meals_eaten)
+			free(table->meals_eaten);
+		if (table->last_meal_time)
+			free(table->last_meal_time);
+		free(table);
+	}
 	if (philos)
 		free(philos);
-	free(table);
 	return (1);
 }
-int	init_destroy(t_data *table, int flag)
+int	init_destroy(t_data *table, int flag, int count)
 {
 	int	i;
-	
+
 	if (flag > 1)
 		pthread_mutex_destroy(&table->stop_mutex);
 	if (flag > 2)
@@ -29,9 +39,8 @@ int	init_destroy(t_data *table, int flag)
 		i = -1;
 		if (table->forks)
 		{
-			while (++i < table->philosopher_count)
+			while (++i < count)
 				pthread_mutex_destroy(&table->forks[i]);
-			free(table->forks);
 		}
 	}
 	return (1);
@@ -48,14 +57,16 @@ int	main(int ac, char **av)
 	}
 	table = malloc(sizeof(t_data));
 	if (!table)
-		return (cleanup(NULL, NULL, 1, 0));
-	if (av_config(av, table) || init_simulation(table))
-		return (cleanup(table, NULL, 1, 0));
-	philos = malloc(sizeof(t_philo) * table->philosopher_count);
+		return (cleanup(NULL, 1, 0, 0));
+	philos = malloc(sizeof(t_philo) * ft_atoi(av[1]));
 	if (!philos)
-		return (cleanup(table, NULL, 1, 4));
+		return (cleanup(philos, 1, 0, 0));
+	if (av_config(av, table))
+		return (cleanup(philos, 1, 0, 0));
+	if (init_simulation(table, philos))
+		return (cleanup(philos, 1, 0, 0));
 	if (thread_start(table, philos))
-		return (cleanup(table, philos, 1, 4));
-	cleanup(table, philos, 0, 4);
+		return (cleanup(philos, 1, 4, table->philosopher_count));
+	cleanup(philos, 0, 4, table->philosopher_count);
 	return (0);
 }
